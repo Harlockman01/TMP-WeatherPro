@@ -1,0 +1,162 @@
+name: Build WeatherPro ES DLL
+
+# Trigger: on push/PR to main, or manually from the Actions tab
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  # vcpkg is preinstalled on windows-2022 runner at C:\vcpkg
+  VCPKG_HOME: C:\vcpkg
+
+jobs:
+  build:
+    name: Build (Release x64 + Win32)
+    runs-on: windows-2022
+
+    steps:
+    # ──────────────────────────────────────────────────────────────────
+    # 1. Checkout del repositorio (con tus archivos en español ya subidos)
+    # ──────────────────────────────────────────────────────────────────
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: recursive
+
+    # ──────────────────────────────────────────────────────────────────
+    # 2. Añadir MSBuild al PATH (Visual Studio 2022 ya está instalado)
+    # ──────────────────────────────────────────────────────────────────
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    # ──────────────────────────────────────────────────────────────────
+    # 3. Cache de paquetes de vcpkg (acelera builds siguientes)
+    # ──────────────────────────────────────────────────────────────────
+    - name: Cache vcpkg installed packages
+      uses: actions/cache@v4
+      with:
+        path: C:\vcpkg\installed
+        key: vcpkg-ssl-zlib-static-v1-${{ runner.os }}
+
+    # ──────────────────────────────────────────────────────────────────
+    # 4. Instalar dependencias via vcpkg (OpenSSL + zlib estáticos)
+    # ──────────────────────────────────────────────────────────────────
+    - name: Install vcpkg packages (OpenSSL + zlib static, x64 + x86)
+      shell: pwsh
+      run: |
+        Write-Host "Installing vcpkg packages..."
+        & C:\vcpkg\vcpkg.exe install `
+          openssl:x64-windows-static `
+          openssl:x86-windows-static `
+          zlib:x64-windows-static `
+          zlib:x86-windows-static
+
+        # vcpkg names the static OpenSSL libraries as
+        #   libcrypto.lib / libssl.lib
+        # but the project's .vcxproj expects the official slproweb
+        # installer naming:
+        #   libcrypto_static.lib / libssl_static.lib
+        # We rename (copy) them so MSBuild finds the right names.
+        foreach ($triplet in @("x64-windows-static","x86-windows-static")) {
+            $libDir = "C:\vcpkg\installed\$triplet\lib"
+            if (Test-Path "$libDir\libcrypto.lib") {
+                Copy-Item "$libDir\libcrypto.lib" "$libDir\libcrypto_static.lib" -Force
+                Copy-Item "$libDir\libssl.lib"    "$libDir\libssl_static.lib"    -Force
+                Write-Host "  -> Renamed OpenSSL libs in $libDir"
+            }
+        }
+
+        # Verify
+        Write-Host "`nInstalled packages:"
+        Get-ChildItem C:\vcpkg\installed\x64-windows-static\lib\lib* | Format-Table Name
+
+    # ──────────────────────────────────────────────────────────────────
+    # 5. Variables de entorno que el .vcxproj espera
+    # ──────────────────────────────────────────────────────────────────
+    - name: Set OPENSSL_30 env vars
+      shell: pwsh
+      run: |
+        # The .vcxproj uses:
+        #   $(OPENSSL_30)\include\        -> headers (covered by vcpkg too)
+        #   $(OPENSSL_30)\                -> lib search dir (covered by vcpkg too)
+        # We point them at the vcpkg install dirs so everything resolves.
+        "OPENSSL_30=C:\vcpkg\installed\x64-windows-static"  | Out-File -FilePath $env:GITHUB_ENV -Append
+        "OPENSSL_30_x86=C:\vcpkg\installed\x86-windows-static" | Out-File -FilePath $env:GITHUB_ENV -Append
+        Write-Host "OPENSSL_30       = C:\vcpkg\installed\x64-windows-static"
+        Write-Host "OPENSSL_30_x86   = C:\vcpkg\installed\x86-windows-static"
+
+    # ──────────────────────────────────────────────────────────────────
+    # 6. Build x64 (Release)
+    # ──────────────────────────────────────────────────────────────────
+    - name: Build x64 (Release)
+      shell: cmd
+      run: |
+        msbuild TMP-WeatherPro.sln ^
+          /p:Configuration=Release ^
+          /p:Platform=x64 ^
+          /m ^
+          /v:minimal ^
+          /nologo
+
+    # ──────────────────────────────────────────────────────────────────
+    # 7. Build Win32 (Release)
+    # ──────────────────────────────────────────────────────────────────
+    - name: Build Win32 (Release)
+      shell: cmd
+      run: |
+        msbuild TMP-WeatherPro.sln ^
+          /p:Configuration=Release ^
+          /p:Platform=Win32 ^
+          /m ^
+          /v:minimal ^
+          /nologo
+
+    # ──────────────────────────────────────────────────────────────────
+    # 8. Subir las DLLs como artefactos descargables
+    # ──────────────────────────────────────────────────────────────────
+    - name: Upload x64 DLL
+      uses: actions/upload-artifact@v4
+      with:
+        name: WeatherPro-x64-ES
+        path: bin\x64\Release\plugins\WeatherPro.dll
+        if-no-files-found: error
+
+    - name: Upload Win32 DLL
+      uses: actions/upload-artifact@v4
+      with:
+        name: WeatherPro-Win32-ES
+        path: bin\Release\plugins\WeatherPro.dll
+        if-no-files-found: error
+
+    - name: Upload both DLLs (combined)
+      uses: actions/upload-artifact@v4
+      with:
+        name: WeatherPro-ES-All
+        path: |
+          bin\x64\Release\plugins\WeatherPro.dll
+          bin\Release\plugins\WeatherPro.dll
+        if-no-files-found: error
+
+    # ──────────────────────────────────────────────────────────────────
+    # 9. (Opcional) Crear un Release con la DLL cuando se taggea
+    # ──────────────────────────────────────────────────────────────────
+    - name: Zip DLLs for release
+      if: startsWith(github.ref, 'refs/tags/v')
+      shell: pwsh
+      run: |
+        $ver = "${{ github.ref_name }}"
+        New-Item -ItemType Directory -Path release -Force | Out-Null
+        Copy-Item bin\x64\Release\plugins\WeatherPro.dll release\WeatherPro-x64-$ver.dll
+        Copy-Item bin\Release\plugins\WeatherPro.dll   release\WeatherPro-x86-$ver.dll
+        Compress-Archive -Path release\* -DestinationPath release\WeatherPro-ES-$ver.zip
+
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: release/*.zip
+        generate_release_notes: true
