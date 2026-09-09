@@ -33,9 +33,11 @@ namespace
     constexpr std::wstring_view WSV_DRAW_WEATHER_ICON{ L"draw_weather_icon" };
     constexpr std::wstring_view WSV_ACTIVE_AUTO_LOCATING{ L"auto_locating" };
     constexpr std::wstring_view WSV_API_TYPE{ L"api_type" };
-    constexpr std::wstring_view WSV_API_WCC{ L"api_weather.com.cn" };
+    // renamed: was "api_weather.com.cn" - now just "api_weather.com"
+    constexpr std::wstring_view WSV_API_WCC{ L"api_weather.com" };
     constexpr std::wstring_view WSV_API_QWEATHER{ L"api_qweather" };
     constexpr std::wstring_view WSV_API_OPENWEATHER{ L"api_openweather" };
+    constexpr std::wstring_view WSV_API_OPEN_METEO{ L"api_open_meteo" };
     constexpr std::wstring_view WSV_LOCATION_ID{ L"location_id" };
     constexpr std::wstring_view WSV_LOCATION_NAME{ L"location_name" };
     constexpr std::wstring_view WSV_LOC_LONGITUDE{ L"loc_longitude" };
@@ -112,6 +114,7 @@ namespace
         EnumStrMappingItem{.enum_val = ApiType::WeatherComCnSpider, .str_val = WSV_API_WCC},
         EnumStrMappingItem{.enum_val = ApiType::QWeather, .str_val = WSV_API_QWEATHER},
         EnumStrMappingItem{.enum_val = ApiType::OpenWeather, .str_val = WSV_API_OPENWEATHER},
+        EnumStrMappingItem{.enum_val = ApiType::OpenMeteo, .str_val = WSV_API_OPEN_METEO},
     });
 
     DataManager::UpdateInterval ParseUpdateInterval(std::wstring_view str_interval) {
@@ -145,6 +148,10 @@ namespace
     }
 
     ApiType ParseApiType(std::wstring_view str_api_type) {
+        // backward compatibility: legacy value "api_weather.com.cn" maps to WeatherComCnSpider
+        if (str_api_type == L"api_weather.com.cn") {
+            return ApiType::WeatherComCnSpider;
+        }
         return ParseStrToEnum(enum_str_mapping_api_type,
                               str_api_type, ApiType::WeatherComCnSpider);
     }
@@ -158,11 +165,11 @@ namespace
         return cmn::MultiByte2WideChar(loc.getFormattedString(format_geo_coords).c_str());
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// 自动定位
+    /// Auto-locating
     bool AutoLocating(LocationSource source, const DataProvider &data_provider, Location &loc) {
         loc = {};
 
-        // 1. 通过 provider 获取位置
+        // 1. get location via provider
         if (HasFlag(source, LocationSource::ApiProvided) && data_provider.autoLocating(loc)) {
             return true;
         }
@@ -199,14 +206,14 @@ namespace
         double latitude = 0.0;
         std::string loc_name;
 
-        // 2. 通过系统获取经纬度
+        // 2. get coordinates via OS
         if (HasFlag(source, LocationSource::OsGeolocation) && cmn::GetSystemLocation(longitude, latitude)) {
             if (try_reverse_geocoding(latitude, longitude)) {
                 return true;
             }
         }
 
-        // 3. 通过 IP 获取经纬度和地名
+        // 3. get coordinates/name via IP
         if ((HasFlag(source, LocationSource::IpGeolocation) || HasFlag(source, LocationSource::IpRegionName)) &&
             cmn::GetIpLocation(longitude, latitude, loc_name)) {
             if (HasFlag(source, LocationSource::IpGeolocation) && 
@@ -224,7 +231,7 @@ namespace
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// 数据更新与缓存
+    /// Data update and cache
     
     std::mutex update_mutex;
     std::atomic_bool is_updating{ false };
@@ -271,7 +278,7 @@ namespace
     std::atomic<std::shared_ptr<SnapshotImpl>> cache_snapshot;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// 解析与保存常驻区设置
+    /// Parse and save pinned-item settings
     auto ParsePinnedItemDataKeys(const std::wstring &str_keys) {
         static const std::wregex pattern{ LR"rgx(\(\s*(\d+)\s*,\s*(\d+)\s*\))rgx" };
 
@@ -420,8 +427,6 @@ void DataManager::ProceedUpdate() {
         return;
     }
 
-    // ensure that the 'is_updating' flag is set to false
-    // after exiting the update process.
     UpdateGuard guard;    
 
     const auto &current_api = api_collections_->GetApi(config_.api_type);
@@ -431,7 +436,6 @@ void DataManager::ProceedUpdate() {
         config_.auto_locating && AutoLocating(config_.auto_locating_src, data_provider, loc)) {
         current_loc_ = loc;
 
-        // save the location to config file
         SaveConfigs();
     }
 
@@ -446,7 +450,6 @@ void DataManager::RefreshCache() const {
 
     auto weather_data = current_weather_data.load(std::memory_order_acquire);
     if (weather_data != nullptr) {
-        // rebuild cache map
         constexpr static auto array_time_slot = std::to_array(
             {
                 WeatherTimeSlot::REALTIME,
@@ -481,7 +484,6 @@ void DataManager::RefreshCache() const {
             }
         }
 
-        // rebuild tooltip text
         const auto summary_wstr = cmn::MultiByte2WideChar(weather_data->getWeatherSummary().c_str());
         new_snapshot->tooltip_text = std::format(
             L"{} {}", FormatLocation(current_loc_, config_.format_geo_coords_in_summary), summary_wstr

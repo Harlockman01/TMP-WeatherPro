@@ -51,6 +51,9 @@
     <ClCompile Include="WeatherApiOpenWeather.cpp">
       <Filter>API</Filter>
     </ClCompile>
+    <ClCompile Include="WeatherApiOpenMeteo.cpp">
+      <Filter>API</Filter>
+    </ClCompile>
     <ClCompile Include="DataManager.cpp">
       <Filter>API</Filter>
     </ClCompile>
@@ -70,6 +73,9 @@
       <Filter>DLG</Filter>
     </ClCompile>
     <ClCompile Include="OptionsOwDlg.cpp">
+      <Filter>DLG</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsOmDlg.cpp">
       <Filter>DLG</Filter>
     </ClCompile>
     <ClCompile Include="AutoLocSettingsDlg.cpp">
@@ -136,6 +142,9 @@
     <ClInclude Include="WeatherApiOpenWeather.h">
       <Filter>API</Filter>
     </ClInclude>
+    <ClInclude Include="WeatherApiOpenMeteo.h">
+      <Filter>API</Filter>
+    </ClInclude>
     <ClInclude Include="DataManager.h">
       <Filter>API</Filter>
     </ClInclude>
@@ -155,6 +164,9 @@
       <Filter>DLG</Filter>
     </ClInclude>
     <ClInclude Include="OptionsOwDlg.h">
+      <Filter>DLG</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsOmDlg.h">
       <Filter>DLG</Filter>
     </ClInclude>
     <ClInclude Include="AutoLocSettingsDlg.h">

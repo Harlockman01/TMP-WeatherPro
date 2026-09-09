@@ -42,6 +42,9 @@
     <ClInclude Include="DataProviderOpenWeather.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DataProviderOpenMeteo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="DbgMemoryLeak.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -69,6 +72,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DataProviderOpenWeather.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DataProviderOpenMeteo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DataDef.cpp">

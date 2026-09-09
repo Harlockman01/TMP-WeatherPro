@@ -218,6 +218,7 @@
     <ClCompile Include="MainSettingsDlg.cpp" />
     <ClCompile Include="ModalProgressDlg.cpp" />
     <ClCompile Include="OptionsOwDlg.cpp" />
+    <ClCompile Include="OptionsOmDlg.cpp" />
     <ClCompile Include="OptionsQwDlg.cpp" />
     <ClCompile Include="OptionsWccDlg.cpp" />
     <ClCompile Include="pch.cpp">
@@ -231,6 +232,7 @@
     <ClCompile Include="SetLocationDlg.cpp" />
     <ClCompile Include="TextViewerDlg.cpp" />
     <ClCompile Include="WeatherApiOpenWeather.cpp" />
+    <ClCompile Include="WeatherApiOpenMeteo.cpp" />
     <ClCompile Include="WeatherApiQWeather.cpp" />
     <ClCompile Include="WeatherApiWCCS.cpp" />
     <ClCompile Include="WeatherPro.cpp" />
@@ -248,6 +250,7 @@
     <ClInclude Include="MainSettingsDlg.h" />
     <ClInclude Include="ModalProgressDlg.h" />
     <ClInclude Include="OptionsOwDlg.h" />
+    <ClInclude Include="OptionsOmDlg.h" />
     <ClInclude Include="OptionsQwDlg.h" />
     <ClInclude Include="OptionsWccDlg.h" />
     <ClInclude Include="PinnedItem.h" />
@@ -255,6 +258,7 @@
     <ClInclude Include="SetLocationDlg.h" />
     <ClInclude Include="TextViewerDlg.h" />
     <ClInclude Include="WeatherApiOpenWeather.h" />
+    <ClInclude Include="WeatherApiOpenMeteo.h" />
     <ClInclude Include="WeatherApiQWeather.h" />
     <ClInclude Include="WeatherAPI.h" />
     <ClInclude Include="framework.h" />

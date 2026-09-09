@@ -7,13 +7,15 @@ namespace tr
     enum class Locale
     {
         CHINESE_S,
-        ENGLISH,
+        ENGLISH,    // reuse slot for Spanish fallback labels
+        SPANISH,
     };
 
     enum class TID
     {
         LC_OPENWEATHER,
         LC_QWEATHER,
+        LC_OPEN_METEO,
 
         FMT_AIR_QUALITY,
         FMT_DAT_AFTER_TOMORROW,

@@ -1,6 +1,6 @@
 ﻿//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ 生成的包含文件。
-// 供 WeatherPro.rc 使用
+// Microsoft Visual C++ generated include file.
+// Used by WeatherPro.rc
 //
 #define IDS_WEATHER_PRO                 1000
 #define IDC_COMBO_DATA_SOURCE           1000
@@ -148,13 +148,17 @@
 #define IDC_CHECK_DUAL_LINE_MODE        1071
 #define IDC_PROGRESS_X                  1072
 
+// New resource IDs for Open-Meteo
+#define IDS_API_OM                      1073
+#define IDD_DLG_OPTIONS_OM              1074
+
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        1038
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1074
+#define _APS_NEXT_CONTROL_VALUE         1075
 #define _APS_NEXT_SYMED_VALUE           1000
 #endif
 #endif

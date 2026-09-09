@@ -7,6 +7,7 @@ enum class ApiType
     WeatherComCnSpider,
     QWeather,
     OpenWeather,
+    OpenMeteo,
 };
 
 enum class IconResType

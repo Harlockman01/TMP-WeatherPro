@@ -1,48 +1,76 @@
-# 数据源配置说明
+# Guía de configuración de fuentes de datos
 
-## 1. 天气网 (www.weather.com.cn)
+## 1. Weather.com (weather.com)
 
-开箱即用
+Lista para usar sin configuración.
 
-## 2. 和风天气 (www.qweather.com)
+## 2. QWeather (www.qweather.com)
 
-### 2.1 创建账户
+### 2.1 Crear cuenta
 
-- 进入和风天气[开发者页面](https://dev.qweather.com/)，点击「免费注册」
-- 注册成功后，进入[开发控制台](https://console.qweather.com/home?lang=zh)
-- 点击左侧边栏「设置」，复制「API Host」的内容，粘贴至插件API选项「API Host」对应输入框内
+- Entre en la [página de desarrolladores de QWeather](https://dev.qweather.com/) y pulse en "Registro gratuito"
+- Tras registrarse, entre en la [consola de desarrollo](https://console.qweather.com/home?lang=es)
+- Pulse en "Configuración" en la barra lateral izquierda, copie el contenido de "API Host" y péguelo en el campo "Host de API" de las opciones de API del complemento
 
-### 2.2 创建项目
+### 2.2 Crear proyecto
 
-- 点击左侧边栏「项目管理」，点击页面右上角「创建项目」按钮
-- 输入项目名称后点击「保存」
+- Pulse en "Gestión de proyectos" en la barra lateral y, a continuación, en "Crear proyecto" en la esquina superior derecha
+- Introduzca el nombre del proyecto y pulse "Guardar"
 
-### 2.3 创建凭据
+### 2.3 Crear credencial
 
-- 点击页面右上角「创建凭据」按钮，输入凭据名称
+- Pulse en "Crear credencial" en la esquina superior derecha e introduzca el nombre de la credencial
 
 #### 2.3.1 Key
 
-- 「身份认证方式」选择「API KEY」，点击保存即可生成密钥
-- 复制「API KEY」的内容，在插件API选项界面，选择「Key」，粘贴至对应输入框内
+- En "Método de autenticación" seleccione "API KEY" y pulse guardar para generar la clave
+- Copie el contenido de "API KEY", vaya a las opciones de API del complemento, seleccione "Key" y péguelo en el campo correspondiente
 
-> 注意：从2027年1月1日起，使用API KEY认证方式都将受请求量的限制。
+> Nota: A partir del 1 de enero de 2027, la autenticación mediante API KEY estará sujeta a límites de solicitudes.
 
 #### 2.3.2 JWT
 
-- 首先使用插件生成密钥文件
-  - 插件API选项界面，选择「JWT」
-  - 点击「创建密钥对」，选择一个文件夹位保存密钥文件
-  - 点击「复制公钥」将公钥复制到系统剪切板
-- 回到网页页面，「身份认证方式」选择「JSON Web Token」
-- 在「上传公钥」的输入框内粘贴公钥内容，点击保存
-- 在JWT凭据页面，复制「凭据ID」，粘贴至插件API选项界面「凭据ID」对应输入框
-- 在项目页面，复制「项目ID」，粘贴至插件API选项界面「项目ID」对应输入框
+- Primero genere los archivos de clave con el complemento
+  - En las opciones de API del complemento, seleccione "JWT"
+  - Pulse "Crear clave" y seleccione una carpeta para guardar los archivos de clave
+  - Pulse "Copiar clave pública" para copiar la clave pública al portapapeles del sistema
+- Vuelva a la página web; en "Método de autenticación" seleccione "JSON Web Token"
+- Pegue la clave pública en el campo "Subir clave pública" y pulse guardar
+- En la página de credenciales JWT, copie "ID de credencial" y péguelo en el campo "ID de credencial" de las opciones de API del complemento
+- En la página del proyecto, copie "ID de proyecto" y péguelo en el campo "ID de proyecto" de las opciones de API del complemento
 
 ## 3. OpenWeather (www.openweathermap.org)
 
-注册账号后，在[API Keys](https://home.openweathermap.org/api_keys)页面复制key到插件API选项界面「API Key」对应输入框中。
+Tras registrar una cuenta, copie la clave desde la página [API Keys](https://home.openweathermap.org/api_keys) al campo "Clave de API" de las opciones de API del complemento.
 
-免费额度下，支持查询当前天气、空气质量、地理位置。
+Con la cuota gratuita, puede consultar el clima actual, la calidad del aire y la ubicación geográfica.
 
-本插件当前支持「One Call 3.0」接口。
+Este complemento soporta la interfaz "One Call 3.0".
+
+## 4. Open-Meteo (www.open-meteo.com) — **Recomendado**
+
+**Gratuita, sin API key y sin registro.**
+
+Open-Meteo es una API meteorológica abierta y gratuita que no requiere registro ni claves de API. Ofrece:
+
+- Clima actual (temperatura, humedad, sensación térmica, viento, precipitación, código WMO)
+- Pronóstico de 3 días (temperaturas máx/mín, código WMO, índice UV, probabilidad de precipitación, humedad)
+- Calidad del aire en tiempo real (AQI estándar de EE.UU., PM2.5, PM10)
+- Geocodificación directa (nombre → coordenadas) integrada con soporte de varios idiomas, incluido el español
+- Geocodificación inversa (coordenadas → nombre) mediante el servicio gratuito BigDataCloud
+
+### Uso
+
+1. En la configuración del complemento, seleccione "Open-Meteo (open-meteo.com)" como fuente de datos
+2. Pulse "Opciones de API" para elegir las unidades (métricas o imperiales)
+3. Use "Establecer ubicación" para buscar su ciudad por nombre o coordenadas
+
+No se necesita ninguna clave. La auto-ubicación funciona mediante el sistema operativo o por IP (a través de los servicios existentes).
+
+### Limitaciones
+
+- No hay alertas meteorológicas (Open-Meteo no proporciona este dato)
+- Sin pronóstico horario detallado (se ofrece pronóstico diario de 3 días)
+- Límite de ~10.000 solicitudes diarias para uso no comercial (suficiente para uso personal)
+
+> Para uso comercial intensivo, consulte los términos de Open-Meteo en https://open-meteo.com/en/terms

@@ -1,108 +1,118 @@
 # WeatherPro
 
-WeatherPro 是一款为 [TrafficMonitor](https://github.com/zhongyang219/TrafficMonitor) 开发的天气信息插件，支持多种数据源和丰富的自定义选项。
+WeatherPro es un complemento de información del clima para [TrafficMonitor](https://github.com/zhongyang219/TrafficMonitor) que soporta múltiples fuentes de datos y opciones de personalización avanzadas.
 
-本项目原始仓库为 [Haojia521/TrafficMonitorPlugins](https://github.com/Haojia521/TrafficMonitorPlugins)，曾发布至 v0.14 版本，现已被归档。当前仓库对代码进行了全面重构与升级，并正式发布 v1.0 版本，后续的新版本也将在此仓库中发布。
+El repositorio original del proyecto es [Haojia521/TrafficMonitorPlugins](https://github.com/Haojia521/TrafficMonitorPlugins), publicado hasta la versión v0.14 y posteriormente archivado. Este repositorio reescribió y actualizó completamente el código, publicando la versión v1.0. Las nuevas versiones se publicarán en este repositorio.
 
-建议与TrafficMonitor v1.86及以上版本配合使用。
+Se recomienda usar junto a TrafficMonitor v1.86 o superior.
 
-## 功能特性
+> **Nota**: Esta es una versión traducida al español que, además, sustituye la identificación de la API de `weather.com.cn` por `api.weather.com` e incorpora una nueva fuente de datos: **Open-Meteo** (https://open-meteo.com/), una API gratuita y sin necesidad de registro.
 
-- 支持多种天气接口 （配置方法请参考[接口说明](docs/DataSourceGuide.md)）
-  - 天气网 (weather.com.cn)
-  - 和风天气 (qweather.com)
+## Características
+
+- Soporta múltiples fuentes de datos (consulte la [guía de fuentes de datos](docs/DataSourceGuide.md) para la configuración)
+  - Weather.com (weather.com)
+  - QWeather (qweather.com)
   - OpenWeather (openweathermap.org)
-- 支持在横置任务栏占用两行显示天气信息
-- 支持设置数据常驻显示区
-- 支持在固定宽度的主窗口区滚动显示长文本
-- 支持丰富的天气信息自定义控制选项
+  - Open-Meteo (open-meteo.com) — **gratis, sin API key ni registro**
+- Soporta mostrar información del clima en dos líneas cuando la barra de tareas está en horizontal
+- Soporta configurar una zona de datos fijos
+- Soporta desplazamiento de texto largo en la ventana principal de ancho fijo
+- Soporta amplias opciones de personalización de la información meteorológica
 
-## 版本更新 V1.2.0 
+## Novedades de la versión V1.2.0
 
-- [优化] 内嵌多分辨率图标以适应不同DPI屏幕
-- [优化] 位置设置界面显示待选位置的经纬度
-- [优化] 支持主动检查插件更新
-- [优化] 在检查插件更新、手动更新天气、检索位置时，显示非阻塞进度窗口
-- [修复] 缺失天气网部分天气现象编码
+- [Mejora] Iconos integrados de múltiples resoluciones para adaptarse a distintas pantallas DPI
+- [Mejora] La interfaz de selección de ubicación muestra las coordenadas geográficas de las ubicaciones candidatas
+- [Mejora] Comprobación activa de actualizaciones del complemento
+- [Mejora] Ventana de progreso no modal durante la comprobación de actualizaciones, actualización manual del clima y búsqueda de ubicaciones
+- [Corrección] Faltaban algunos códigos de fenómenos meteorológicos de weather.com
 
-## 程序界面介绍
+## Descripción de la interfaz
 
-- 任务栏窗口主数据显示区
+- Zona principal de datos en la barra de tareas
 
-  显示天气+气温，天气可渲染为图标或文本。新版支持按固定宽度显示，并滚动显示长文本。此处的天气数据可选择当前天气、今日天气、24\~48小时天气、48\~72小时天气。
+  Muestra el clima y la temperatura; el clima puede renderizarse como icono o texto. La nueva versión soporta ancho fijo con desplazamiento de texto largo. Los datos pueden ser: clima actual, clima de hoy, pronóstico de 24~48 horas o de 48~72 horas.
 
-  ![主显示区](images/taskbar-wnd.png)
+  ![Zona principal](images/taskbar-wnd.png)
 
-  V1.1新增双行显示模式。当前任务栏为水平状态、TrafficMonitor的显示项目个数为奇数并且WeatherPro主项目位于最后，则可以占用两行空间绘制图标和文本。
+  V1.1 añade el modo de doble línea. Si la barra de tareas está horizontal, el número de elementos de TrafficMonitor es impar y el elemento principal de WeatherPro está al final, puede ocupar dos líneas para dibujar el icono y el texto.
 
-  ![主显示区双行模式](images/taskbar-wnd-dual-line-mode.png)
+  ![Modo doble línea](images/taskbar-wnd-dual-line-mode.png)
 
-  V1.0版本支持设置常驻信息显示区，按选定的时间段与数据项目显示数据。修改常驻显示区配置后需要重启TrafficMonitor使配置生效。
+  V1.0 soporta configurar una zona de información fija que muestra datos según la franja horaria y el elemento seleccionados. Tras modificar la configuración de la zona fija, debe reiniciar TrafficMonitor para que los cambios surtan efecto.
 
-  ![常驻显示区](images/taskbar-wnd-pinned-items.png)
+  ![Zona fija](images/taskbar-wnd-pinned-items.png)
 
-- 鼠标提示弹窗
+- Ventana emergente de información al pasar el ratón
 
-  ![提示弹窗](images/tooltip-info.png)
+  ![Tooltip](images/tooltip-info.png)
 
-- 设置界面
+- Interfaz de configuración
 
-  配置数据源、位置和数据显示方式等内容。当有新版本发布时，界面底部将显示“有新版”按钮引导用户下载。
+  Configura la fuente de datos, ubicación y modo de visualización. Cuando se publica una nueva versión, se mostrará un botón "¡Nueva versión!" en la parte inferior para guiarle en la descarga.
 
-  ![设置](images/main-settings.png)
+  ![Configuración](images/main-settings.png)
 
-- API设置界面
+- Interfaz de configuración de API
 
-  天气网API-weather.com.cn设置。
+  Opciones de la API de weather.com.
 
-  ![wcc选项](images/api-wcc-options.png)
+  ![Opciones WCC](images/api-wcc-options.png)
 
-  和风天气API-qweather.com设置。
+  Opciones de la API de QWeather (qweather.com).
 
-  ![qw选项](images/api-qweather-options.png)
+  ![Opciones QW](images/api-qweather-options.png)
 
-  OpenWeather API-openweathermap.org设置
+  Opciones de la API de OpenWeather (openweathermap.org).
 
-  ![ow选项](images/api-openweather-options.png)
+  ![Opciones OW](images/api-openweather-options.png)
 
-- 位置设置界面
+- Interfaz de selección de ubicación
 
-  除按文本查询位置外，新增支持按经纬度查询位置。经纬度信息在特定接口是必需的，如和风天气(qwather.com)空气质量查询接口和OpenWeather的接口。
+  Además de buscar por texto, se soporta la búsqueda por coordenadas. Las coordenadas son obligatorias para algunas APIs, como QWeather (calidad del aire) y OpenWeather.
 
-  ![位置设置](images/set-location.png)
+  ![Selección de ubicación](images/set-location.png)
 
-- 常驻显示区设置
+- Configuración de zona fija
 
-  按照时间段+数据项设置常驻区。常驻区的显示顺序以及标签文本，可在TrafficMonitor的任务栏窗口设置页修改。
+  Configura la zona fija por franja horaria y elemento de datos. El orden y las etiquetas de la zona fija pueden modificarse en la página de configuración de la barra de tareas de TrafficMonitor.
 
-  ![常驻区设置](images/pinned-items-settings.png)
+  ![Configuración zona fija](images/pinned-items-settings.png)
 
-- 定位设置
+- Configuración de ubicación automática
 
-  自由选择自动定位的方式。如果所有方式均失败将不改变当前的位置信息。
+  Seleccione libremente el método de auto-ubicación. Si todos los métodos fallan, no se cambiará la información de ubicación actual.
 
-  ![定位设置](images/auto-loc-settings.png)
+  ![Configuración auto-ubicación](images/auto-loc-settings.png)
 
-### 历史更新
+### Historial de versiones
 
 - V1.0.4
 
-  - [新增] 支持OpenWeather数据源
-  - [新增] 按经纬度设置目标位置
-  - [新增] 主窗口区滚动显示长文本
-  - [新增] 设置常驻数据显示区
-  - [新增] 存在天气预警时在图标右上角绘制通知圆点
-  - [新增] 新版本发布提醒
-  - [优化] 自动定位支持选用API位置、操作系统定位、IP地理坐标和IP属地名称
-  - [优化] 在独立窗口中查看详细的预警信息和日志
-  - [修复] 查询天气信息时没有正确设置线程语言
-  - [修复] 和风天气(QWeather)API在更换密钥后仍返回缓存JWT
+  - [Nuevo] Soporte de fuente de datos OpenWeather
+  - [Nuevo] Establecer ubicación por coordenadas geográficas
+  - [Nuevo] Desplazamiento de texto largo en la zona principal
+  - [Nuevo] Zona de datos fijos
+  - [Nuevo] Punto de notificación en el icono cuando hay alertas
+  - [Nuevo] Aviso de nueva versión
+  - [Mejora] Auto-ubicación soporta API, sistema operativo, coordenadas IP y nombre de región IP
+  - [Mejora] Visor de alertas y logs en ventana separada
+  - [Corrección] Idioma del hilo no se configuraba correctamente al consultar el clima
+  - [Corrección] La API de QWeather devolvía un JWT en caché tras cambiar la clave
 
 - V1.1.0
 
-  - [新增] 双行显式模式。在水平任务栏上，如果主项目窗口单独在最右端可以使用双行显式信息
-  - [新增] 设置是否在天气信息概览中显示详细位置坐标
-  - [修复] 日志时间戳为UTC时间而非本地时间
-  - [修复] 没有使用新版插件接口设置语言
-  - [修复] 和风天气API数据时间戳类型不一致
-  - [修复] 解析json字符串可能导致崩溃
+  - [Nuevo] Modo de doble línea. En barra de tareas horizontal, si el elemento principal está solo a la derecha, puede usar doble línea
+  - [Nuevo] Opción para mostrar las coordenadas geográficas en el resumen del clima
+  - [Corrección] La marca de tiempo del log era UTC en vez de hora local
+  - [Corrección] No se usaba la nueva interfaz del complemento para configurar el idioma
+  - [Corrección] Inconsistencia en los tipos de marca de tiempo de QWeather
+  - [Corrección] Posible cuelgue al analizar cadenas JSON
+
+### Cambios en esta versión en español
+
+- [Nuevo] Toda la interfaz y los mensajes traducidos al español
+- [Nuevo] Fuente de datos Open-Meteo (sin API key, sin registro, gratuita)
+- [Cambio] Renombrado el identificador `api_weather.com.cn` → `api_weather.com` (compatible con configuraciones anteriores)
+- [Cambio] La localización por defecto para sistemas no chinos ahora es español

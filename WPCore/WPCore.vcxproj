@@ -171,6 +171,7 @@
     <ClCompile Include="..\dependencies\yyjson\src\yyjson.c" />
     <ClCompile Include="DataDef.cpp" />
     <ClCompile Include="DataProviderOpenWeather.cpp" />
+    <ClCompile Include="DataProviderOpenMeteo.cpp" />
     <ClCompile Include="DataProviderQWeather.cpp" />
     <ClCompile Include="AppLocale.cpp" />
     <ClCompile Include="DataProviderSpiderWeatherComCn.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="..\dependencies\yyjson\src\yyjson.h" />
     <ClInclude Include="DataDef.h" />
     <ClInclude Include="DataProviderOpenWeather.h" />
+    <ClInclude Include="DataProviderOpenMeteo.h" />
     <ClInclude Include="DataProviderQWeather.h" />
     <ClInclude Include="AppLocale.h" />
     <ClInclude Include="DataProviderSpiderWeatherComCn.h" />

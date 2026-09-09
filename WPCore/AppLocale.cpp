@@ -7,7 +7,7 @@ namespace
 {
     using namespace tr;
 
-    auto enabled_locale{ Locale::CHINESE_S };
+    auto enabled_locale{ Locale::SPANISH };
 
     struct LocaleTextItem
     {
@@ -20,6 +20,7 @@ namespace
         {
             {.tid = TID::LC_OPENWEATHER, .text = "zh_cn"},
             {.tid = TID::LC_QWEATHER, .text = "zh-hans"},
+            {.tid = TID::LC_OPEN_METEO, .text = "zh"},
 
             {.tid = TID::FMT_AIR_QUALITY, .text = "空气质量"},
             {.tid = TID::FMT_DAT_AFTER_TOMORROW, .text = "后日"},
@@ -57,6 +58,7 @@ namespace
         {
             {.tid = TID::LC_OPENWEATHER, .text = "en"},
             {.tid = TID::LC_QWEATHER, .text = "en"},
+            {.tid = TID::LC_OPEN_METEO, .text = "en"},
 
             {.tid = TID::FMT_AIR_QUALITY, .text = "AQ"},
             {.tid = TID::FMT_DAT_AFTER_TOMORROW, .text = "DAT"},
@@ -89,6 +91,44 @@ namespace
             {.tid = TID::ERR_UNKOWN, .text = "Unkown error"},
         });
 
+    // Spanish locale table - the default fallback for non-Chinese systems
+    constexpr std::array<LocaleTextItem, static_cast<size_t>(TID::COUNT)> TEXT_TABLE_ES = std::to_array<LocaleTextItem>(
+        {
+            {.tid = TID::LC_OPENWEATHER, .text = "es"},
+            {.tid = TID::LC_QWEATHER, .text = "es"},
+            {.tid = TID::LC_OPEN_METEO, .text = "es"},
+
+            {.tid = TID::FMT_AIR_QUALITY, .text = "CA"},
+            {.tid = TID::FMT_DAT_AFTER_TOMORROW, .text = "PMA"},
+            {.tid = TID::FMT_HUMIDITY, .text = "HUM"},
+            {.tid = TID::FMT_TODAY, .text = "HOY"},
+            {.tid = TID::FMT_TOMORROW, .text = "MAÑ"},
+            {.tid = TID::FMT_UVI, .text = "IUV"},
+
+            {.tid = TID::FMT_TMP_WIND_DIRECTION, .text = "Viento: {}"},
+            {.tid = TID::FMT_TMP_WIND_SCALE, .text = "N.{}"},
+
+            {.tid = TID::ERR_AUTH_NO_API_HOST, .text = "Falta host de API"},
+            {.tid = TID::ERR_AUTH_NO_APP_KEY, .text = "Falta clave de API"},
+            {.tid = TID::ERR_AUTH_JWT_NO_PROJ_ID, .text = "Falta ID de proyecto"},
+            {.tid = TID::ERR_AUTH_JWT_NO_CRED_ID, .text = "Falta ID de credencial JWT"},
+            {.tid = TID::ERR_CODE, .text = "Código de error"},
+            {.tid = TID::ERR_EXTRACT_DATA_FAILED, .text = "Error al extraer datos de la respuesta"},
+            {.tid = TID::ERR_GEN_KEYPAIR_FAILED, .text = "Error al generar par de claves"},
+            {.tid = TID::ERR_INTERNET_EMPTY_RESPONSE, .text = "El servidor no devolvió contenido"},
+            {.tid = TID::ERR_INVALID_JSON, .text = "Contenido JSON inválido"},
+            {.tid = TID::ERR_JWT_CANNOT_OPEN_PRV_FILE, .text = "Error al abrir archivo de clave privada"},
+            {.tid = TID::ERR_NO_LONG_LAT, .text = "Sin coordenadas de longitud/latitud"},
+            {.tid = TID::ERR_PARSING_JSON_FAILED, .text = "Contenido JSON inválido"},
+            {.tid = TID::ERR_QUERY_FCW3D_FAILED, .text = "Error al consultar pronóstico de 3 días"},
+            {.tid = TID::ERR_QUERY_GEOCODING_FAILED, .text = "Error al consultar información de ubicación"},
+            {.tid = TID::ERR_QUERY_ONECALL_FAILED, .text = "Error al consultar clima por onecall"},
+            {.tid = TID::ERR_QUERY_RTAQ_FAILED, .text = "Error al consultar calidad del aire"},
+            {.tid = TID::ERR_QUERY_RTW_FAILED, .text = "Error al consultar clima actual"},
+            {.tid = TID::ERR_QUERY_RTWA_FAILED, .text = "Error al consultar alertas meteorológicas"},
+            {.tid = TID::ERR_UNKOWN, .text = "Error desconocido"},
+        });
+
     template<size_t N>
     constexpr bool checkTableTextOrder(const std::array<LocaleTextItem, N> &tab) {
         for (size_t i = 0; i < N; ++i) {
@@ -102,6 +142,7 @@ namespace
 
     static_assert(checkTableTextOrder(TEXT_TABLE_ZH_S), "TEXT_TABLE_ZH_S: TID does not match index");
     static_assert(checkTableTextOrder(TEXT_TABLE_EN), "TEXT_TABLE_EN: TID does not match index");
+    static_assert(checkTableTextOrder(TEXT_TABLE_ES), "TEXT_TABLE_ES: TID does not match index");
 
     const auto& getTextTable() {
         switch (enabled_locale) {
@@ -110,9 +151,12 @@ namespace
 
         case Locale::ENGLISH:
             return TEXT_TABLE_EN;
+
+        case Locale::SPANISH:
+            return TEXT_TABLE_ES;
         }
 
-        return TEXT_TABLE_EN;
+        return TEXT_TABLE_ES;
     }
 }
 

@@ -1,4 +1,4 @@
-﻿// WeatherPro.cpp: 定义 DLL 的初始化例程。
+﻿// WeatherPro.cpp: defines DLL initialization routines.
 //
 
 #include "pch.h"
@@ -37,37 +37,31 @@ namespace
 
         switch (interval) {
             case DataManager::UpdateInterval::Minutes5:
-                // next update will be in 5 to 10 minutes
                 return static_cast<std::time_t>(5 * 60 + rand_number % (5 * 60));
 
             case DataManager::UpdateInterval::Minutes15:
-                // next update will be in 15 to 20 minutes
                 return static_cast<std::time_t>(15 * 60 + rand_number % (5 * 60));
 
             case DataManager::UpdateInterval::Minutes30:
-                // next update will be in 25 to 35 minutes
                 return static_cast<std::time_t>(25 * 60 + rand_number % (10 * 60));
 
             case DataManager::UpdateInterval::Minutes60:
-                // next update will be in 50 to 65 minutes
                 return static_cast<std::time_t>(50 * 60 + rand_number % (15 * 60));
 
             case DataManager::UpdateInterval::Minutes120:
-                // next update will be in 100 to 120 minutes
                 return static_cast<std::time_t>(100 * 60 + rand_number % (20 * 60));
         }
 
-        // default
-        // next update will be in 25 to 35 minutes
         return static_cast<std::time_t>(25 * 60 + rand_number % (10 * 60));
     }
 
     constexpr WORD LANGID_EN_US{ MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US) };
     constexpr WORD LANGID_ZH_CN{ MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED) };
+    constexpr WORD LANGID_ES_ES{ MAKELANGID(LANG_SPANISH, SUBLANG_SPANISH_MODERN) };
 
     void SetLanguageId(WORD lang_id) {
         if (lang_id == 0 || lang_id == LOCALE_INVARIANT) {
-            // 跟随系统  LOCALE_INVARIANT=127
+            // follow system locale
             SetLanguageId(GetThreadUILanguage());
             return;
         }
@@ -75,9 +69,17 @@ namespace
         if (PRIMARYLANGID(lang_id) == LANG_CHINESE) {
             SetThreadUILanguage(LANGID_ZH_CN);
             tr::setLocale(tr::Locale::CHINESE_S);
-        } else {
+        } else if (PRIMARYLANGID(lang_id) == LANG_SPANISH) {
+            // Spanish: keep using EN-US resources (which we have translated to Spanish)
+            // but tell the app locale to use Spanish strings.
             SetThreadUILanguage(LANGID_EN_US);
-            tr::setLocale(tr::Locale::ENGLISH);
+            tr::setLocale(tr::Locale::SPANISH);
+        } else {
+            // Default fallback: Spanish UI (the "English" resource section was
+            // translated to Spanish in this build). Spanish is the primary
+            // non-Chinese language for this fork.
+            SetThreadUILanguage(LANGID_EN_US);
+            tr::setLocale(tr::Locale::SPANISH);
         }
     }
 
@@ -94,7 +96,7 @@ namespace
             return;
         }
 
-        // 查找TrafficMonitor的配置文件，读取语言id
+        // look for TrafficMonitor's config file and read language id
         long tm_lang_id{ -1 };
         auto tm_cfg_filepath = cfg_dir_path.parent_path() / L"config.ini";
         if (fs::is_regular_file(tm_cfg_filepath)) {
@@ -105,26 +107,26 @@ namespace
             }
         }
 
-        if (tm_lang_id <= 0) {           // 没有查找到TrafficMonitor的语言设置 或 语言跟随系统
+        if (tm_lang_id <= 0) {
             SetLanguageId(0);
         } else {
-            if (tm_lang_id < 5) {        // 兼容旧版id值 1-English 2-Chinese_S 3-Chinese_T
+            if (tm_lang_id < 5) {
                 if (tm_lang_id == 2 || tm_lang_id == 3) {
                     SetLanguageId(LANGID_ZH_CN);
                 } else {
-                    SetLanguageId(LANGID_EN_US);
+                    SetLanguageId(LANGID_ES_ES);
                 }
-            } else {                     // 新版直接存储语言id
+            } else {
                 SetLanguageId(static_cast<WORD>(tm_lang_id));
             }
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // 版本号
+    // Version
 
     std::time_t last_new_version_checking_timestamp{ 0 };
-    constexpr std::time_t NEW_VERSION_CHECKING_INTERVAL_S{ 12 * 60 * 60 };    // checking new version in every 12 hours
+    constexpr std::time_t NEW_VERSION_CHECKING_INTERVAL_S{ 12 * 60 * 60 };
 
     HMODULE GetCurrentModuleHandle()
     {
@@ -307,7 +309,7 @@ std::wstring WpVersion::to_wstring() const {
 WeatherPro WeatherPro::instance;
 
 WeatherPro& WeatherPro::Instance() {
-	return instance;
+        return instance;
 }
 
 IPluginItem* WeatherPro::GetItem(int index) {
@@ -363,21 +365,8 @@ const wchar_t* WeatherPro::GetTooltipInfo() {
 }
 
 void WeatherPro::OnInitialize(ITrafficMonitor *pApp) {
-    //winrt::init_apartment();
-
-    // load icon resources
-    // IconSheetManager::Instance().LoadIconResources();
-    
     if (pApp != nullptr) {
-        // load configs
-        //DataManager::Instance().LoadConfigs(pApp->GetPluginConfigDir());
-
-        // set dpi value
-        // main_item.SetTaskbarWndDPI(pApp->GetDPI(ITrafficMonitor::DPI_TASKBAR));
-
-        // set thread ui language
         SetLanguageId(pApp->GetLanguageId());
-
         host_app = pApp;
     }
 }
@@ -385,7 +374,6 @@ void WeatherPro::OnInitialize(ITrafficMonitor *pApp) {
 void WeatherPro::OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data) {
     if (index == ExtendedInfoIndex::EI_TASKBAR_WND_VALUE_RIGHT_ALIGN) {
         const auto is_align_right = [](const wchar_t *s) {
-            // early return for null pointer and empty string
             if (!s || !*s) {
                 return false;
             }
